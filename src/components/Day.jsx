@@ -196,6 +196,8 @@ export default function Day({users}) {
 
                     const schedule = user.result.schedule;
 
+                    console.log(user)
+
                     const date = new Date();
                     const d = date.getDay();
 
@@ -203,13 +205,15 @@ export default function Day({users}) {
                         return <></>;
                     }
 
-                    let shift = schedule.map(String);
+                    let shift = schedule.map(String).slice(48*d, 48*(d+1));
                     let start = shift.indexOf("1");
                     let end = shift.lastIndexOf("1");
                     let day = {
                         start: start,
                         duration: end-start
                     }
+
+                    console.log(day)
 
                     return <Event title='Work Shift' day={d} half_hour={day.start} duration={day.duration} num={idx} total={events.length} margin={Math.floor(900/events.length*idx)} key={idx} name={user.firstname}/>
                 }) : <></>}
