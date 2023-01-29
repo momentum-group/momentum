@@ -13,8 +13,7 @@ export async function getServerSideProps(context) {
         const user = await db.collection("users").find({email: {$eq: query.user}}).toArray();
 
         return {
-            // TODO: CHANGE TO result.schedule INSTEAD OF AVAILABILITY
-            props: { isConnected: true, schedule: JSON.parse(JSON.stringify(user[0].availability)), email: query.user },
+            props: { isConnected: true, schedule: JSON.parse(JSON.stringify(user[0].result.schedule)), email: query.user },
         } 
     } catch (e) {
         console.error(e)
