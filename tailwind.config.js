@@ -6,9 +6,11 @@ module.exports = {
     extend: {
       fontFamily: {
         inter: ['inter', 'serif'],
+        unbounded: ['Unbounded', 'serif']
       },
         colors: {
-            'primary': '#5D9948'
+            'primary': '#5D9948',
+            'mango': '#FFBB48'
         }
     },
   },
