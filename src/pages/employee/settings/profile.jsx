@@ -2,14 +2,17 @@
 import Navbar from "@/components/Navbar"
 import Navigation from "@/components/Employee/Navigation"
 import Link from "next/link"
+import { useRouter } from "next/router"
 
 export default function Profile() {
+
+    const router = useRouter()
 
     return (
         <>
             <Navbar />
             <div className="flex mt-20 mx-44">
-                <Navigation />
+                <Navigation email={router.query.email} />
                 <div className="w-[1px] h-[600px] border border-black ml-10 mr-16" />
                 <form className="flex flex-col text-xl my-10 items-end gap-2">
                     <div>
