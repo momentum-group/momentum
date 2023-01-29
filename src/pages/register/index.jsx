@@ -2,11 +2,79 @@ import Head from "next/head";
 import Navbar from "@/components/Navbar";
 import Dropdown from "@/components/Dropdown";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { useEffect, useState } from "react";
+import clientPromise from "@/middleware/database";
 
-export default function Register() {
+export async function getServerSideProps(context) {
+    try {
+      await clientPromise
+      // `await clientPromise` will use the default database passed in the MONGODB_URI
+      // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
+      //
+      // `const client = await clientPromise`
+      // `const db = client.db("myDatabase")`
+      //
+      // Then you can execute queries against your database like so:
+      // db.find({}) or any of the MongoDB Node Driver commands
 
-    const [name, setName] = useLocalStorage("name", "")
+        const client = await clientPromise
+        const db = client.db("org_companyName")
+        
+        const users = await db.collection("users").find({}).toArray()
+        
+
+        return {
+            props: { isConnected: true, users: JSON.parse(JSON.stringify(users)) },
+        } 
+    } catch (e) {
+        console.error(e)
+        return {
+            props: { isConnected: false },
+        }
+    }
+  }
+
+export default function Register({isConnected, users}) {
+
+    const [name, setName] = useLocalStorage("name", "");
     const [email, setEmail] = useLocalStorage("email", "");
+
+    const [password, setPassword] = useState('');
+
+    const [accountType, setAccountType] = useState('');
+    const [business, setBusiness] = useState('');
+
+    const handleSetAccountType = (type) => {
+        setAccountType(type);
+    }
+
+    const handleRegister = async (e) => {
+        var isEmployer = false;
+        if (accountType == 'Employee') {
+            isEmployer = false;
+        } else {
+            isEmployer = true;
+        }
+
+        const response = await fetch("/api/register", {
+            method: "POST",
+            body: JSON.stringify({email: email, password: password, firstname: name.split(" ")[0], lastname: name.split(" ")[1], company: business, is_employer: isEmployer}),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        
+        const data = await response.json();
+        if (data.status == 200) {
+            if (data.data[0].is_employer) {
+                router.push({pathname: "/employer", query: {user: email}})
+            } else {
+                router.push({pathname: "/employee", query: {user: email}})
+            }
+        } else {
+
+        }
+    };
 
     return (
         <div className="h-screen text-black font-unbounded">
@@ -14,8 +82,6 @@ export default function Register() {
                 <title>Momentum | Register</title>
             </Head>
             <Navbar type={"register"}/>
-
-
 
             <main className="w-full h-5/6 flex items-center justify-center">
 
@@ -25,12 +91,33 @@ export default function Register() {
                             <div className="flex flex-col gap-2">
                                 <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="name" value={name} onChange={e => setName(e.target.value)}/>
                                 <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="email" value={email} onChange={e => setEmail(e.target.value)}/>
+                                
+                                <br />
+                                <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="password" placeholder="password" value={password} onChange={e => setPassword(e.target.value)}/>
+
 
                                 <br />
                                 <label htmlFor="account-type" className="text-sm">Are you an employer or employee?</label>
-                                <Dropdown />                                
+                                <Dropdown setType={handleSetAccountType} />    
 
-                                <button className="px-4 py-2 rounded-lg text-white font-unbounded shadow bg-gradient-to-r from-primary to-mango transition hover:scale-110">Let's go</button>
+                                { accountType === 'Employer' ? 
+                                    <div className="mt-6 flex flex-col">
+                                        <label htmlFor="businessName" className="text-sm">Please enter the name of your employer</label>
+                                        <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="businessName" type="text" placeholder="name of business" onChange={e => setEmail(e.target.value)}/>
+                                    </div> 
+                                : 
+                                    <></>
+                                }                 
+                                { accountType === 'Employee' ? 
+                                    <div className="mt-6 flex flex-col">
+                                        <label htmlFor="businessName" className="text-sm">Please enter the name of your employer</label>
+                                        <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="businessName" type="text" placeholder="name of business" onChange={e => setBusiness(e.target.value)}/>
+                                    </div> 
+                                : 
+                                    <></>
+                                }                      
+
+                                <button className="px-4 py-2 rounded-lg text-white font-unbounded shadow bg-gradient-to-r from-primary to-mango transition hover:scale-110" onClick={handleRegister}>Let's go</button>
                             </div>
                     </div>
 
