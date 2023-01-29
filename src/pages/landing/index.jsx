@@ -11,7 +11,7 @@ export default function Landing() {
     const [email, setEmail] = useLocalStorage("email", "");
     
     return (
-        <div className="w-screen h-screen">
+        <div className="w-screen h-full">
             <Head>
                 <title>Momentum</title>
             </Head>

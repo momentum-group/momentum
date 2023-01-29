@@ -1,21 +1,18 @@
 import Link from "next/link"
 import { useRouter } from "next/router"
 
-export default function Navigation() {
-
-    const router = useRouter()
-
+export default function Navigation({email}) {
     return (
         <div className="flex flex-col font-semibold text-3xl gap-6 w-fit align-right items-end mt-6">
-            <span onClick={() => router.back()} className="w-fit hover:text-primary hover:scale-110 mx-5 my-2 duration-150">
+            <Link href={{pathname: "/employee", query: {email: email}}} className="w-fit hover:text-primary mx-5 my-2 duration-150">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-12 h-12">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
                 </svg>
-            </span>
-            <Link href="/employee/settings/profile" className="w-fit hover:bg-primary hover:text-white px-5 py-2 rounded-2xl duration-150">
+            </Link>
+            <Link href={{pathname: "/employee/settings/profile", query: {email: email}}} className="w-fit hover:bg-primary hover:text-white px-5 py-2 rounded-2xl duration-150">
                 Profile
             </Link>
-            <Link href="/employee/settings/availability" className="w-fit hover:bg-primary hover:text-white px-5 py-2 rounded-2xl duration-150">
+            <Link href={{pathname: "/employee/settings/availability", query: {email: email}}} className="w-fit hover:bg-primary hover:text-white px-5 py-2 rounded-2xl duration-150">
                 Availability
             </Link>
             <Link href="/employee/settings/appearance" className="w-fit hover:bg-primary hover:text-white px-5 py-2 rounded-2xl duration-150">

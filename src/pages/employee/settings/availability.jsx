@@ -1,9 +1,92 @@
-
 import Navbar from "@/components/Navbar"
-import Link from "next/link"
 import Navigation from "@/components/Employee/Navigation"
+import { useState } from "react"
+import clientPromise from "@/middleware/database";
+import { useRouter } from "next/router";
 
-export default function Availability() {
+export async function getServerSideProps(context) {
+    try {
+        const client = await clientPromise;
+        const query = context.query;
+        const db = client.db("org_companyName")
+        const user = await db.collection("users").find({email: {$eq: query.email}}).toArray();
+
+        return {
+            props: { isConnected: true, availability: user[0].availability},
+        } 
+    } catch (e) {
+        console.error(e)
+        return {
+            props: { isConnected: false },
+        }
+    }
+}
+
+export default function Availability({isConnected, availability}) {
+
+    const router = useRouter();
+
+
+    const [sundayStart, setSundayStart] = useState(availability.slice(0, 48).indexOf(1))
+    const [sundayEnd, setSundayEnd] = useState(availability.slice(0, 48).lastIndexOf(1))
+
+    const [mondayStart, setMondayStart] = useState(availability.slice(48, 96).indexOf(1))
+    const [mondayEnd, setMondayEnd] = useState(availability.slice(48, 96).lastIndexOf(1))
+
+    const [tuesdayStart, setTuesdayStart] = useState(availability.slice(96, 144).indexOf(1))
+    const [tuesdayEnd, setTuesdayEnd] = useState(availability.slice(96, 144).lastIndexOf(1))
+
+    const [wedStart, setWedStart] = useState(availability.slice(144, 192).indexOf(1))
+    const [wedEnd, setWedEnd] = useState(availability.slice(144, 192).lastIndexOf(1))
+
+    const [thurStart, setThurStart] = useState(availability.slice(192, 240).indexOf(1))
+    const [thurEnd, setThurEnd] = useState(availability.slice(192, 240).lastIndexOf(1))
+
+    const [friStart, setFriStart] = useState(availability.slice(240, 288).indexOf(1))
+    const [friEnd, setFriEnd] = useState(availability.slice(240, 288).lastIndexOf(1))
+
+    const [satStart, setSatStart] = useState(availability.slice(288, 336).indexOf(1))
+    const [satEnd, setSatEnd] = useState(availability.slice(288, 336).lastIndexOf(1))
+
+
+    const handleSave = async () => {
+        const sunday = new Array(48).fill(0)
+        sunday.fill(1, sundayStart, sundayEnd)
+        
+        const mon = new Array(48).fill(0)
+        mon.fill(1, mondayStart, mondayEnd)
+
+        const tues = new Array(48).fill(0)
+        tues.fill(1, tuesdayStart, tuesdayEnd)
+
+        const wed = new Array(48).fill(0)
+        wed.fill(1, wedStart, wedEnd)
+
+        const thu = new Array(48).fill(0)
+        thu.fill(1, thurStart, thurEnd)
+
+        const fri = new Array(48).fill(0)
+        fri.fill(1, friStart, friEnd)
+
+        const sat = new Array(48).fill(0)
+        sat.fill(1, satStart, satEnd)
+        
+        const availability = sunday.concat(mon, tues, wed, thu, fri, sat)
+
+        const response = await fetch("/api/saveAvailability", {
+            method: "POST",
+            body: JSON.stringify({email: router.query.email, availability: availability}),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+        if (data.status == 200) {
+        } else {
+        }
+
+    }
+
 
     return (
         <>
@@ -26,7 +109,7 @@ export default function Availability() {
                             </label>
                             <div>
                                 <span>Start Time: </span>
-                                <select id="availability" name="sunday_start" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="sunday_start" value={sundayStart} onChange={(e) => setSundayStart(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -79,7 +162,7 @@ export default function Availability() {
                             </div>
                             <div>
                                 <span>End Time: </span>
-                                <select id="availability" name="sunday_end" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="sunday_end" value={sundayEnd} onChange={(e) => setSundayEnd(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -138,7 +221,7 @@ export default function Availability() {
                             </label>
                             <div>
                                 <span>Start Time: </span>
-                                <select id="availability" name="monday_start" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="monday_start" value={mondayStart} onChange={(e) => setMondayStart(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -191,7 +274,7 @@ export default function Availability() {
                             </div>
                             <div>
                                 <span>End Time: </span>
-                                <select id="availability" name="monday_end" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="monday_end" value={mondayEnd} onChange={(e) => setMondayEnd(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -250,7 +333,7 @@ export default function Availability() {
                             </label>
                             <div>
                                 <span>Start Time: </span>
-                                <select id="availability" name="tuesday_start" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="tuesday_start" value={tuesdayStart} onChange={(e) => setTuesdayStart(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -303,7 +386,7 @@ export default function Availability() {
                             </div>
                             <div>
                                 <span>End Time: </span>
-                                <select id="availability" name="tuesday_end" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="tuesday_end" value={tuesdayEnd} onChange={(e) => setTuesdayEnd(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -362,7 +445,7 @@ export default function Availability() {
                             </label>
                             <div>
                                 <span>Start Time: </span>
-                                <select id="availability" name="wednesday_start" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="wednesday_start" value={wedStart} onChange={(e) => setWedStart(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -415,7 +498,7 @@ export default function Availability() {
                             </div>
                             <div>
                                 <span>End Time: </span>
-                                <select id="availability" name="wednesday_end" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="wednesday_end" value={wedEnd} onChange={(e) => setWedEnd(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -474,7 +557,7 @@ export default function Availability() {
                             </label>
                             <div>
                                 <span>Start Time: </span>
-                                <select id="availability" name="thursday_start" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="thursday_start" value={thurStart} onChange={(e) => setThurStart(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -527,7 +610,7 @@ export default function Availability() {
                             </div>
                             <div>
                                 <span>End Time: </span>
-                                <select id="availability" name="thursday_end" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="thursday_end" value={thurEnd} onChange={(e) => setThurEnd(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -586,7 +669,7 @@ export default function Availability() {
                             </label>
                             <div>
                                 <span>Start Time: </span>
-                                <select id="availability" name="friday_start" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="friday_start" value={friStart} onChange={(e) => setFriStart(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -639,7 +722,7 @@ export default function Availability() {
                             </div>
                             <div>
                                 <span>End Time: </span>
-                                <select id="availability" name="friday_end" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="friday_end" value={friEnd} onChange={(e) => setFriEnd(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -698,7 +781,7 @@ export default function Availability() {
                             </label>
                             <div>
                                 <span>Start Time: </span>
-                                <select id="availability" name="saturday_start" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="saturday_start" value={satStart} onChange={(e) => setSatStart(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -751,7 +834,7 @@ export default function Availability() {
                             </div>
                             <div>
                                 <span>End Time: </span>
-                                <select id="availability" name="saturday_end" className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
+                                <select id="availability" name="saturday_end" value={satEnd} onChange={(e) => setSatEnd(e.target.value)} className="bg-white border border-neutral-400 hover:border-neutral-500 px-4 py-2 pr-4 rounded shadow leading-tight accent-primary">
                                     <option value="0">12:00 AM</option>
                                     <option value="1">12:30 AM</option>
                                     <option value="2">1:00 AM</option>
@@ -803,12 +886,10 @@ export default function Availability() {
                                 </select>
                             </div>
                         </div>
-
-                        <button type="submit" className="row-start-3 bg-primary text-white text-xl py-2 px-6 rounded-2xl w-fit h-fit">
-                            Submit
-                        </button>
-
                     </form>
+                    <button onClick={handleSave} className="row-start-3 bg-primary text-white text-xl py-2 px-6 rounded-2xl w-fit h-fit">
+                        Submit
+                    </button>
                 </div>
 
             </div>
