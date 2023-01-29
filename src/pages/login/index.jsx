@@ -18,8 +18,8 @@ export default function Register() {
                 "Content-Type": "application/json",
             },
         });
-        
         const data = await response.json();
+        console.log(data)
         if (data.status == 200) {
             if (data.data[0].is_employer) {
                 router.push({pathname: "/employer", query: {user: email}})
@@ -67,7 +67,5 @@ export default function Register() {
                 </div>
             </main>
         </div>
-
     )
-
 }

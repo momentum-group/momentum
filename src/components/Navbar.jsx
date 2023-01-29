@@ -6,7 +6,7 @@ export default function Navbar(props) {
         return (
             <div className="w-full flex flex-row justify-between items-center bg-primary p-4">
                 <Link href="/">
-                    <p className="text-white text-2xl font-bold">Momentum</p>
+                    <p className="text-white text-2xl font-bold font-unbounded">Momentum</p>
                 </Link>
                 <Link href="/profile">
                     <img src="drlee.png" className="w-[2.5rem] h-[2.5rem] rounded-full" />

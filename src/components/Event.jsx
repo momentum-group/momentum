@@ -1,6 +1,6 @@
 
-export default function Event({ title, day, half_hour, duration }) {
-    
+export default function Event({ title, day, half_hour, duration, margin, total }) {
+
     const dayVariants = {
         0: 'col-start-[2]',
         1: 'col-start-[3]',
@@ -113,6 +113,64 @@ export default function Event({ title, day, half_hour, duration }) {
         48: 'row-span-48',
     }
 
+    const widths = {
+        1: 'w-full',
+        2: 'w-1/2',
+        3: 'w-1/3',
+        4: 'w-1/4',
+        5: 'w-1/5',
+        6: 'w-1/6',
+        7: 'w-[calc(900px/7)]',
+        8: 'w-[calc(900px/8)]',
+        9: 'w-[calc(900px/9)]',
+        10: 'w-[calc(900px/10)]',
+        11: 'w-[calc(900px/11)]',
+        12: 'w-1/12',
+        13: 'w-[calc(900px/13)]',
+        14: 'w-[calc(900px/14)]',
+        15: 'w-[calc(900px/15)]',
+        16: 'w-[calc(900px/16)]',
+        17: 'w-[calc(900px/17)]',
+        18: 'w-[calc(900px/18)]',
+        19: 'w-[calc(900px/19)]',
+        20: 'w-[calc(900px/20)]'
+    }
+
+    const margins = {
+        0: 'mx-0',
+        450: 'ml-[450px]',
+        300: 'ml-[300px]',
+        600: 'ml-[600px]',
+        225: 'ml-[225px]',
+        675: 'ml-[675px]',
+        180: 'ml-[180px]',
+        360: 'ml-[360px]',
+        540: 'ml-[540px]',
+        720: 'ml-[720px]',
+        150: 'ml-[150px]',
+        750: 'ml-[750px]',
+        128: 'ml-[128px]',
+        257: 'ml-[257px]',
+        385: 'ml-[385px]',
+        514: 'ml-[514px]',
+        642: 'ml-[642px]',
+        771: 'ml-[771px]',
+        112: 'ml-[112px]',
+        337: 'ml-[337px]',
+        562: 'ml-[562px]',
+        787: 'ml-[787px]',
+        100: 'ml-[100px]',
+        200: 'ml-[200px]',
+        400: 'ml-[400px]',
+        500: 'ml-[500px]',
+        700: 'ml-[700px]',
+        800: 'ml-[800px]',
+        90: 'ml-[90px]',
+        270: 'ml-[270px]',
+        630: 'ml-[630px]',
+        810: 'ml-[810px]'
+    }
+
     let hour = Math.floor(half_hour / 2)
     if (hour > 12) {
         hour -= 12
@@ -126,7 +184,7 @@ export default function Event({ title, day, half_hour, duration }) {
     }
     
     return (
-        <div className={`${dayVariants[day]} ${startVariants[half_hour]} ${durationVariants[duration]} bg-lime-300/80 border border-lime-700/10 rounded-lg m-1 p-1 flex flex-col`}>
+        <div className={`${dayVariants[day]} ${startVariants[half_hour]} ${durationVariants[duration]} ${widths[total]} ${margins[margin]} bg-lime-300/80 border border-lime-700/10 rounded-lg m-1 p-1 flex flex-col`}>
             <span className="text-xl font-medium text-lime-700">{hour}{half} {half_hour >= 24 ? "PM" : "AM"}</span>
             <span className="text-md text-lime-700">{title}</span>
         </div>
