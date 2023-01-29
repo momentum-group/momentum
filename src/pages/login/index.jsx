@@ -19,7 +19,6 @@ export default function Register() {
             },
         });
         const data = await response.json();
-        console.log(data)
         if (data.status == 200) {
             if (data.data[0].is_employer) {
                 router.push({pathname: "/employer", query: {user: email}})

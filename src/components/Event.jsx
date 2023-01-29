@@ -1,5 +1,5 @@
 
-export default function Event({ title, day, half_hour, duration, margin, total }) {
+export default function Event({ title, day, half_hour, duration, margin, total, name }) {
 
     const dayVariants = {
         0: 'col-start-[2]',
@@ -184,7 +184,8 @@ export default function Event({ title, day, half_hour, duration, margin, total }
     }
     
     return (
-        <div className={`${dayVariants[day]} ${startVariants[half_hour]} ${durationVariants[duration]} ${widths[total]} ${margins[margin]} bg-lime-300/80 border border-lime-700/10 rounded-lg m-1 p-1 flex flex-col`}>
+        <div className={`${dayVariants[day]} ${startVariants[half_hour]} ${durationVariants[duration]} ${widths[total]} ${margins[margin]} bg-lime-300/80 border border-lime-700/10 rounded-lg m-1 p-1 flex flex-col overflow-hidden`}>
+            {name ? <span className="text-xl font-medium text-lime-700">{name}</span> : <></>}
             <span className="text-xl font-medium text-lime-700">{hour}{half} {half_hour >= 24 ? "PM" : "AM"}</span>
             <span className="text-md text-lime-700">{title}</span>
         </div>

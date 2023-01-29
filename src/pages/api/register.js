@@ -26,13 +26,16 @@ export default async function handler(req, res) {
             company: req.body.company,
             email: req.body.email,
             password: hash(req.body.password),
-            is_employer: req.body.is_employer
+            is_employer: req.body.is_employer,
+            result: {createdAt: "none", schedule: []},
+            availability: new Array(336)
         }
 
         const users = db.collection("users");
         const result = await users.insertOne(newUser);
         console.log(`A document was inserted with the _id: ${result.insertedId}`);
 
+        res.json({ status: 200 });
         break;
     }
 }

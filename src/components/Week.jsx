@@ -448,7 +448,6 @@ export default function Week({schedule}) {
                 <div class="row-start-[49] col-start-[8] border-neutral-400/80 border-r"></div>
                 
                 { Object.keys(schedule).map((day) => {
-                    console.log(schedule[day].duration)
                     return <Event title='Work Shift' day={day} half_hour={schedule[day].start} duration={schedule[day].duration} />
                 }) }
 
