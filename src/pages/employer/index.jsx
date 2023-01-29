@@ -53,8 +53,8 @@ export default function EmployerHome({isConnected, user}) {
         <div className="font-inter">
             <Navbar/>
 
-            <main className="mx-64">
-                <p className="text-3xl font-medium pl-4">Today</p>
+            <main className="mx-64 mt-10">
+                <p className="text-3xl font-semibold pl-4">Today</p>
                 <Day users={users} />
             </main>
         </div>
