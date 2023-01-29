@@ -6,7 +6,12 @@ export default function EmployeeHome() {
     return (
         <>  
             <Navbar />
-            <Week />
+
+            <div className="flex flex-col">
+                <h1 className="font-semibold text-6xl mx-60 mt-20">Your Week</h1>
+                <Week />
+            </div>
+
         </>
     )
 }
