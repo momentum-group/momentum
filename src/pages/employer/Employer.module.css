@@ -1,0 +1,13 @@
+.calendersection {
+    height: 7rem;
+    width: 100%;
+    border-top-style: dashed;
+    border-bottom-style: none;
+    border-right-style: solid;
+    border-left-style: solid;
+
+    border-width: 2px;
+    border-bottom-width: 1px;
+
+    border-color: rgb(148 163 184);
+}

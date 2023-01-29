@@ -1,13 +1,9 @@
 import Head from 'next/head'
 import Navbar from "@/components/Navbar";
+import Landing from './landing';
 
 export default function Home() {
     return (
-        <div className="w-full">
-            <Head>
-                <title>Momentum</title>
-            </Head>
-            <Navbar />
-        </div>
+        <Landing />
     )
 }
