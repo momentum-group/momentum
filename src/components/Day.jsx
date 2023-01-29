@@ -1,9 +1,13 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Event from "./Event"
 
-export default function Day() {
+export default function Day({users}) {
 
-    const [events, setEvents] = useState([0,1,2,3,4,5,6,7,8,9]);
+    const [events, setEvents] = useState([]);
+
+    useEffect(() => {
+        setEvents(users)
+    }, [users])
 
     return (
         <div className="flex justify-center mt-10">
@@ -188,9 +192,27 @@ export default function Day() {
                 <div class="row-start-[49] col-start-[1] border-neutral-400/80 border-r sticky left-0"></div>
                 <div class="row-start-[49] col-start-[2] border-neutral-400/80 border-r"></div>
                 
-                { events.map((idx, event) => {
-                    return <Event title='Work Shift' day={0} half_hour={2} duration={6} num={idx} total={events.length} margin={Math.floor(900/events.length*idx)} />
-                })}
+                { events ? events.map((user, idx) => {
+
+                    const schedule = user.result.schedule;
+
+                    const date = new Date();
+                    const d = date.getDay();
+
+                    if (schedule.length <= 1) {
+                        return <></>;
+                    }
+
+                    let shift = schedule.map(String);
+                    let start = shift.indexOf("1");
+                    let end = shift.lastIndexOf("1");
+                    let day = {
+                        start: start,
+                        duration: end-start
+                    }
+
+                    return <Event title='Work Shift' day={d} half_hour={day.start} duration={day.duration} num={idx} total={events.length} margin={Math.floor(900/events.length*idx)} key={idx} name={user.firstname}/>
+                }) : <></>}
 
             </div>
         </div>

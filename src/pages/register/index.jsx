@@ -4,6 +4,7 @@ import Dropdown from "@/components/Dropdown";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useState } from "react";
 import clientPromise from "@/middleware/database";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps(context) {
     try {
@@ -48,6 +49,8 @@ export default function Register({isConnected, users}) {
     const [accountType, setAccountType] = useState('');
     const [business, setBusiness] = useState('');
 
+    const router = useRouter();
+
     const handleSetAccountType = (type) => {
         setAccountType(type);
     }
@@ -83,20 +86,22 @@ export default function Register({isConnected, users}) {
             
             const data = await response.json();
             if (data.status == 200) {
-                const response = await fetch("/api/register", {
-                    method: "POST",
-                    body: JSON.stringify({email: email, password: password, firstname: name.split(" ")[0], lastname: name.split(" ")[1], company: business, is_employer: isEmployer}),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
                 
-                const data = await response.json();
-                if (data.status == 200) {
-                    router.push({pathname: "/employer", query: {user: email}})
-                } else {
-                    //TODO: Show error
-                }
+            } else {
+                //TODO: Show error
+                return;
+            }
+            const responseRegister = await fetch("/api/register", {
+                method: "POST",
+                body: JSON.stringify({email: email, password: password, firstname: name.split(" ")[0], lastname: name.split(" ")[1], company: business, is_employer: isEmployer}),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            
+            const dataRegister = await responseRegister.json();
+            if (dataRegister.status == 200) {
+                router.push({pathname: "/employer", query: {user: email}})
             } else {
                 //TODO: Show error
             }
