@@ -448,7 +448,7 @@ export default function Week() {
                 <div class="row-start-[49] col-start-[7] border-neutral-400/80 border-r"></div>
                 <div class="row-start-[49] col-start-[8] border-neutral-400/80 border-r"></div>
                 
-                <Event title='Work Shift' day={1} half_hour={2} duration={6} />
+                <Event title='Work Shift' day={1} half_hour={0} duration={25} />
 
             </div>
         </div>
