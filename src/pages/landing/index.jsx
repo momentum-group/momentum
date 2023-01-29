@@ -42,8 +42,8 @@ export default function Landing() {
 
                     </div>
 
-                    <div className="absolute w-full h-full z-10 overflow-hidden">
-                        <div className="z-0 relative w-full h-full overflow-hidden">
+                    <div className="absolute w-full h-full z-10">
+                        <div className="z-0 relative w-full h-full">
                             <div className="bg-mango opacity-20 w-[300px] h-[200px] absolute right-[400px] top-[250px] rounded-xl" />
                             <div className="bg-red-300 opacity-20 w-[350px] h-[220px] absolute right-[500px] top-[200px] rounded-xl" />
                             <div className="bg-orange-500 opacity-20 w-[150px] h-[270px] absolute left-[300px] top-[50px] rounded-xl" />
