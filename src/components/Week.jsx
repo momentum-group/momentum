@@ -1,7 +1,6 @@
-
 import Event from "./Event"
 
-export default function Week() {
+export default function Week({schedule}) {
 
     return (
         <div className="flex justify-center mt-10">
@@ -448,7 +447,10 @@ export default function Week() {
                 <div class="row-start-[49] col-start-[7] border-neutral-400/80 border-r"></div>
                 <div class="row-start-[49] col-start-[8] border-neutral-400/80 border-r"></div>
                 
-                <Event title='Work Shift' day={1} half_hour={2} duration={6} />
+                { Object.keys(schedule).map((day) => {
+                    console.log(schedule[day].duration)
+                    return <Event title='Work Shift' day={day} half_hour={schedule[day].start} duration={schedule[day].duration} />
+                }) }
 
             </div>
         </div>

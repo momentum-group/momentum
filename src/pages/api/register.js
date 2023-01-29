@@ -33,15 +33,6 @@ export default async function handler(req, res) {
         const result = await users.insertOne(newUser);
         console.log(`A document was inserted with the _id: ${result.insertedId}`);
 
-        // users.insertOne(newUser, function(err, res) {
-        //     if (err) {
-        //         res.json({ status: 400, data: {"reason": "Failed to create new user"}})
-        //     } else {
-        //         res.json({ status: 200 })
-        //         db.close();
-        //     }
-        // })
-
         break;
     }
 }

@@ -2,7 +2,7 @@ import Head from "next/head";
 import Navbar from "@/components/Navbar";
 import Dropdown from "@/components/Dropdown";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import clientPromise from "@/middleware/database";
 
 export async function getServerSideProps(context) {
@@ -40,6 +40,10 @@ export default function Register({isConnected, users}) {
     const [email, setEmail] = useLocalStorage("email", "");
 
     const [password, setPassword] = useState('');
+    const [passwordRepeat, setPasswordRepeat] = useState('');
+
+    const [showPasswordError, setShowPasswordError] = useState(false);
+
 
     const [accountType, setAccountType] = useState('');
     const [business, setBusiness] = useState('');
@@ -52,29 +56,76 @@ export default function Register({isConnected, users}) {
         var isEmployer = false;
         if (accountType == 'Employee') {
             isEmployer = false;
-        } else {
-            isEmployer = true;
-        }
-
-        const response = await fetch("/api/register", {
-            method: "POST",
-            body: JSON.stringify({email: email, password: password, firstname: name.split(" ")[0], lastname: name.split(" ")[1], company: business, is_employer: isEmployer}),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
         
-        const data = await response.json();
-        if (data.status == 200) {
-            if (data.data[0].is_employer) {
-                router.push({pathname: "/employer", query: {user: email}})
-            } else {
+            const response = await fetch("/api/register", {
+                method: "POST",
+                body: JSON.stringify({email: email, password: password, firstname: name.split(" ")[0], lastname: name.split(" ")[1], company: business, is_employer: isEmployer}),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            
+            const data = await response.json();
+            if (data.status == 200) {
                 router.push({pathname: "/employee", query: {user: email}})
+            } else {
+                //TODO: Show error
             }
         } else {
-
+            isEmployer = true;
+            const response = await fetch("/api/registerBusiness", {
+                method: "POST",
+                body: JSON.stringify({company: business}),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            
+            const data = await response.json();
+            if (data.status == 200) {
+                const response = await fetch("/api/register", {
+                    method: "POST",
+                    body: JSON.stringify({email: email, password: password, firstname: name.split(" ")[0], lastname: name.split(" ")[1], company: business, is_employer: isEmployer}),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                
+                const data = await response.json();
+                if (data.status == 200) {
+                    router.push({pathname: "/employer", query: {user: email}})
+                } else {
+                    //TODO: Show error
+                }
+            } else {
+                //TODO: Show error
+            }
         }
     };
+
+    const handleEqualPassword = (e) => {
+        setPasswordRepeat(e.target.value)
+
+        if (e.target.value != password) {
+            setShowPasswordError(true);
+            return;
+        }
+        setShowPasswordError(false);
+    }
+
+    const handleFirstPasswordEqual = (e) => {
+        setPassword(e.target.value)
+
+        if (passwordRepeat == '') {
+            return;
+        }
+
+        if (e.target.value != passwordRepeat) {
+            setShowPasswordError(true);
+            return;
+        }
+        setShowPasswordError(false);
+    }
 
     return (
         <div className="h-screen text-black font-unbounded">
@@ -93,8 +144,10 @@ export default function Register({isConnected, users}) {
                                 <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="email" value={email} onChange={e => setEmail(e.target.value)}/>
                                 
                                 <br />
-                                <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="password" placeholder="password" value={password} onChange={e => setPassword(e.target.value)}/>
+                                <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="password" placeholder="password" value={password} onChange={e => handleFirstPasswordEqual(e)}/>
+                                <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="password" placeholder="password" value={passwordRepeat} onChange={e => handleEqualPassword(e)}/>
 
+                                { showPasswordError ? <p className="text-red-400 text-xs">Passwords don't match</p> : <></>}
 
                                 <br />
                                 <label htmlFor="account-type" className="text-sm">Are you an employer or employee?</label>
@@ -103,7 +156,7 @@ export default function Register({isConnected, users}) {
                                 { accountType === 'Employer' ? 
                                     <div className="mt-6 flex flex-col">
                                         <label htmlFor="businessName" className="text-sm">Please enter the name of your employer</label>
-                                        <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="businessName" type="text" placeholder="name of business" onChange={e => setEmail(e.target.value)}/>
+                                        <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="businessName" type="text" placeholder="name of business" onChange={e => setBusiness(e.target.value)}/>
                                     </div> 
                                 : 
                                     <></>
