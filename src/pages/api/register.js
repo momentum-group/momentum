@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
         const employer = await db.collection("employer").find({company: {$eq: req.body.company},}).toArray();
         if (employer.length == 0) { // Employer doesn't exist
-            res.json({ status: 400, data: {"reason": "Company doesn't exists"}});
+            res.json({ status: 400, data: {"reason": "Company doesn't exist"}});
             break;
         }
 
