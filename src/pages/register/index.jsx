@@ -38,7 +38,10 @@ export async function getServerSideProps(context) {
 export default function Register({isConnected, users}) {
 
     const [name, setName] = useLocalStorage("name", "");
+    const [nameEmpty, setNameEmpty] = useState(false);
+
     const [email, setEmail] = useLocalStorage("email", "");
+    const [emailEmpty, setEmailEmpty] = useState(false);
 
     const [password, setPassword] = useState('');
     const [passwordRepeat, setPasswordRepeat] = useState('');
@@ -48,6 +51,9 @@ export default function Register({isConnected, users}) {
 
     const [accountType, setAccountType] = useState('');
     const [business, setBusiness] = useState('');
+    const [businessEmpty, setBusinessEmpty] = useState(false);
+
+    const [registerError, setRegisterError] = useState('')
 
     const router = useRouter();
 
@@ -56,6 +62,32 @@ export default function Register({isConnected, users}) {
     }
 
     const handleRegister = async (e) => {
+        if (name == '') {
+            setNameEmpty(true);
+            return;
+        }
+
+        setNameEmpty(false);
+
+        if (email == '') {
+            setEmailEmpty(true);
+            return;
+        }
+
+        setEmailEmpty(false);
+
+        if (password == '') {
+            setShowPasswordError(true);
+            return;
+        }
+
+        if (business == '') {
+            setBusinessEmpty(true);
+            return;
+        }
+        setBusinessEmpty(false);
+
+
         var isEmployer = false;
         if (accountType == 'Employee') {
             isEmployer = false;
@@ -69,10 +101,11 @@ export default function Register({isConnected, users}) {
             });
             
             const data = await response.json();
+            console.log(data)
             if (data.status == 200) {
                 router.push({pathname: "/employee", query: {user: email}})
             } else {
-                //TODO: Show error
+                setRegisterError(data.data.reason)
             }
         } else {
             isEmployer = true;
@@ -88,7 +121,7 @@ export default function Register({isConnected, users}) {
             if (data.status == 200) {
                 
             } else {
-                //TODO: Show error
+                setRegisterError(data.data.reason)
                 return;
             }
             const responseRegister = await fetch("/api/register", {
@@ -103,7 +136,7 @@ export default function Register({isConnected, users}) {
             if (dataRegister.status == 200) {
                 router.push({pathname: "/employer", query: {user: email}})
             } else {
-                //TODO: Show error
+                setRegisterError(data.data.reason)
             }
         }
     };
@@ -146,8 +179,9 @@ export default function Register({isConnected, users}) {
                             <p className="font-unbounded text-xl">Glad to see you here!</p>
                             <div className="flex flex-col gap-2">
                                 <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="name" value={name} onChange={e => setName(e.target.value)}/>
+                                { nameEmpty ? <p className="text-red-400 text-xs">Please enter your name</p> : <></>}
                                 <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="email" value={email} onChange={e => setEmail(e.target.value)}/>
-                                
+                                { emailEmpty ? <p className="text-red-400 text-xs">Please enter your email</p> : <></>}
                                 <br />
                                 <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="password" placeholder="password" value={password} onChange={e => handleFirstPasswordEqual(e)}/>
                                 <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="password" placeholder="password" value={passwordRepeat} onChange={e => handleEqualPassword(e)}/>
@@ -162,6 +196,8 @@ export default function Register({isConnected, users}) {
                                     <div className="mt-6 flex flex-col">
                                         <label htmlFor="businessName" className="text-sm">Please enter the name of your employer</label>
                                         <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="businessName" type="text" placeholder="name of business" onChange={e => setBusiness(e.target.value)}/>
+                                        { businessEmpty ? <p className="text-red-400 text-xs">Please enter a business name</p> : <></>}
+
                                     </div> 
                                 : 
                                     <></>
@@ -170,10 +206,13 @@ export default function Register({isConnected, users}) {
                                     <div className="mt-6 flex flex-col">
                                         <label htmlFor="businessName" className="text-sm">Please enter the name of your employer</label>
                                         <input className="font-unbounded shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="businessName" type="text" placeholder="name of business" onChange={e => setBusiness(e.target.value)}/>
+                                        { businessEmpty ? <p className="text-red-400 text-xs">Please enter a business name</p> : <></>}
                                     </div> 
                                 : 
                                     <></>
                                 }                      
+
+                                { registerError ? <p className="text-red-400 text-xs">{registerError}</p> : <></> }
 
                                 <button className="px-4 py-2 rounded-lg text-white font-unbounded shadow bg-gradient-to-r from-primary to-mango transition hover:scale-110" onClick={handleRegister}>Let's go</button>
                             </div>
